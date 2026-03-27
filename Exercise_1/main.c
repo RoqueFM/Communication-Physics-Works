@@ -21,6 +21,101 @@
 // Macro para indexar la matriz 2D como vector 1D (row-major)
 #define IDX(i,j) ((i)*JMAX + (j))
 
+#define FRAMESTEP 2
+
+void save_frame(double *field, int frame){
+    char name[64];
+    sprintf(name,"./Frames/frame_%05d.ppm",frame);
+
+    FILE *f=fopen(name,"wb");
+
+    fprintf(f,"P6\n%d %d\n255\n",IMAX,JMAX);
+
+    double scale = 0.005;
+
+    // for(int i=0;i<IMAX;i++)
+    // for(int j=0;j<JMAX;j++)
+    //     if(scale < fabs(field[IDX(i,j)]))
+    //         scale = fabs(field[IDX(i,j)]);
+
+    if(scale == 0) scale = 1.0;
+
+    for(int i=0;i<IMAX;i++)
+    for(int j=0;j<JMAX;j++){
+
+        double v = field[IDX(i,j)]/scale;
+
+        if(v>1) v=1;
+        if(v<-1) v=-1;
+
+        unsigned char r,g,b;
+
+        if(v>=0){
+            r=255;
+            g=(unsigned char)(255*(1-v));
+            b=(unsigned char)(255*(1-v));
+        }else{
+            b=255;
+            g=(unsigned char)(255*(1+v));
+            r=(unsigned char)(255*(1+v));
+        }
+
+        fputc(r,f);
+        fputc(g,f);
+        fputc(b,f);
+    }
+
+    fclose(f);
+}
+
+void save_frame_with_grid(double *ex,int frame){
+    char name[64];
+    sprintf(name,"./Frames/frame_%05d.ppm",frame);
+
+    FILE *f=fopen(name,"wb");
+    fprintf(f,"P6\n%d %d\n255\n",IMAX,JMAX);
+
+    double scale = 0.005;
+    // for(int i=0;i<IMAX;i++)
+    //     for(int j=0;j<JMAX;j++)
+    //         if(scale < fabs(ex[IDX(i,j)]))
+    //             scale = fabs(ex[IDX(i,j)]);
+
+    int step_x = 100; // cada 100 celdas en x
+    int step_y = 10;  // cada 20 celdas en y
+
+    for(int i=0;i<IMAX;i++)
+    for(int j=0;j<JMAX;j++){
+            double v = ex[IDX(i,j)]/scale;
+            if(v>1) v=1;
+            if(v<-1) v=-1;
+
+            unsigned char r,g,b;
+
+            // pintar campo
+            if(v>=0){
+                r=255;
+                g=(unsigned char)(255*(1-v));
+                b=(unsigned char)(255*(1-v));
+            }else{
+                b=255;
+                g=(unsigned char)(255*(1+v));
+                r=(unsigned char)(255*(1+v));
+            }
+
+            // sobreescribir grid
+            if(i % step_x == 0 || j % step_y == 0){
+                r = g = b = 0;
+            }
+
+            fputc(r,f);
+            fputc(g,f);
+            fputc(b,f);
+    }
+
+    fclose(f);
+}
+
 int main(){
 
     int i,j,n;
@@ -67,6 +162,9 @@ int main(){
         {500,560},
         {500,740}
     };
+
+    int frame = 0;
+    system("mkdir -p Frames");
 
     fprintf(ex_t,"#$t$ (s)\t$E_x$ (V/m)\t");
     fprintf(ey_t,"#$t$ (s)\t$E_y$ (V/m)\t");
@@ -163,24 +261,8 @@ int main(){
             }
         }
 
-        // -------------------------
-        // MONITORIZACIÓN
-        // -------------------------
-        // Se comprueba la propagación en dos puntos
         if(n%(NMAX/10)==0)
             printf("Step %d\n",n);
-
-        // printf("ex(500,560)=%5.3e\tex(500,740)=%5.3e\n",
-        //        ex[IDX(500,560)],ex[IDX(500,740)]);
-
-        // fprintf(ex_t,"%5.5e\t%5.5e\t%5.5e\n",
-        //         n*DT,
-        //         ex[IDX(500,560)],
-        //         ex[IDX(500,740)]);
-        // fprintf(ey_t,"%5.5e\t%5.5e\t%5.5e\n",
-        //         n*DT,
-        //         ey[IDX(500,560)],
-        //         ey[IDX(500,740)]);
 
         fprintf(ex_t,"%5.5e\t",n*DT);
         fprintf(ey_t,"%5.5e\t",n*DT);
@@ -190,6 +272,11 @@ int main(){
         }
         fprintf(ex_t,"\n");
         fprintf(ey_t,"\n");
+
+
+        if(n % FRAMESTEP == 0){
+            save_frame_with_grid(ex, frame++);
+        }
     }
 
     // =========================
