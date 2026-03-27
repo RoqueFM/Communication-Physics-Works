@@ -83,4 +83,5 @@ for file, idx in files:
 axs[-1].set_xlabel(r"$t$ ($\mu$s)")
 
 plt.tight_layout()
+plt.savefig(os.path.join(DIR, "evolucion_temporal.png"),dpi=700)
 plt.show()

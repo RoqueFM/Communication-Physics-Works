@@ -95,4 +95,5 @@ for ax in axs:
     ax.grid(color='k', linestyle=':', linewidth=0.3, alpha=0.3)
 
 plt.tight_layout()
+plt.savefig(os.path.join(DIR, "mapa_campos.png"),dpi=600)
 plt.show()
