@@ -68,6 +68,15 @@ int main(){
         {500,740}
     };
 
+    fprintf(ex_t,"#$t$ (s)\t$E_x$ (V/m)\t");
+    fprintf(ey_t,"#$t$ (s)\t$E_y$ (V/m)\t");
+    for(int i = 0; i<n_puntos; i++){
+        fprintf(ex_t,"(%d,%d)\t",puntos_frente_a_t[i][0],puntos_frente_a_t[i][1]);
+        fprintf(ey_t,"(%d,%d)\t",puntos_frente_a_t[i][0],puntos_frente_a_t[i][1]);
+    }
+    fprintf(ex_t,"\n");
+    fprintf(ey_t,"\n");
+
     // =========================
     // INICIALIZACIÓN DEL MEDIO
     // =========================

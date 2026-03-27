@@ -1,12 +1,86 @@
 import numpy as np
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+import sys
+import os
 
-data = np.loadtxt("ex_frente_a_t.txt")
+# =========================
+# ARGUMENTO
+# =========================
+if len(sys.argv) < 2:
+    print("Uso: python3 plotter1.py <directorio>")
+    sys.exit(1)
 
-plt.scatter(data[:,0]*1e6,data[:,1]*1e3,s=10,label="(600,55)")
-plt.scatter(data[:,0]*1e6,data[:,2]*1e3,s=10,label="(500,740)")
-plt.xlabel("$t$ ($\mu$s)")
-plt.ylabel("$E$ (mV/m)")
-plt.legend()
-plt.grid(True)
+DIR = sys.argv[1]
+
+if not os.path.isdir(DIR):
+    print(f"Error: el directorio '{DIR}' no existe")
+    sys.exit(1)
+
+# =========================
+# ARCHIVOS
+# =========================
+files = [
+    ("ex_frente_a_t.txt", 0),  # subplot 0
+    ("ey_frente_a_t.txt", 1)   # subplot 1
+]
+
+# =========================
+# PARSE CABECERA
+# =========================
+def parse_header(path):
+    with open(path, "r") as f:
+        header = f.readline().strip()
+
+    header = header.lstrip("#").strip()
+    parts = header.split()
+
+    field = parts[2]      # $E_x$, $E_y$
+    points = parts[4:]    # (i,j)
+
+    return field, points
+
+# =========================
+# FIGURA
+# =========================
+fig, axs = plt.subplots(2, 1, sharex=True, figsize=(8, 6))
+
+# =========================
+# PLOT
+# =========================
+for file, idx in files:
+    path = os.path.join(DIR, file)
+
+    if not os.path.isfile(path):
+        print(f"Aviso: no se encuentra {path}")
+        continue
+
+    field, points = parse_header(path)
+    data = np.loadtxt(path, comments="#")
+
+    t = data[:, 0] * 1e6  # μs
+
+    ax = axs[idx]
+
+    for i, point in enumerate(points):
+        ax.scatter(t, data[:, i+1]*1e3, s=10,
+                   label=f"{field} {point}")
+
+    ax.set_ylabel(r"$E$ (mV/m)")
+    ax.set_title(field)
+    ax.grid(True)
+    ax.legend()
+    from matplotlib.ticker import AutoMinorLocator
+
+    ax.xaxis.set_minor_locator(AutoMinorLocator())
+    ax.yaxis.set_minor_locator(AutoMinorLocator())
+
+    ax.grid(which='major', linestyle='-', linewidth=0.8, alpha=0.9)
+    ax.grid(which='minor', linestyle=':', linewidth=0.6, alpha=0.7)
+
+# =========================
+# FORMATO FINAL
+# =========================
+axs[-1].set_xlabel(r"$t$ ($\mu$s)")
+
+plt.tight_layout()
 plt.show()
