@@ -70,7 +70,7 @@ for file, idx in files:
     x = float(splitted[0][1:])
     y = float(splitted[1][:-1])
     # d = np.sqrt((x-500)**2 + (y-500)**2)
-    d = np.abs(500-x)
+    d = np.abs(50-x)
     t = d/speed_of_light
     ax.scatter(t*1e6,0,label="$t=c/d$")
     ax.set_ylabel(r"$E$ (mV/m)")

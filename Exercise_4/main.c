@@ -14,7 +14,7 @@
 #define DT 2.358654337e-9
 #define DX 1.0
 
-#define M 400.0
+#define M 50.0
 
 #define PI acos(-1.)
 
@@ -136,10 +136,10 @@ int main(){
     }
 
     // Datos frente al tiempo
-    int n_puntos = 1;
+    int n_puntos = 2;
     int puntos_frente_a_t[][2] = {
-        // {500,560},
-        {600,55}
+        {600,40},
+        {600,60}
     };
 
     fprintf(ex_t,"#$t$ (s)\t$E_x$ (V/m)\t");
