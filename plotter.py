@@ -39,8 +39,8 @@ ey = np.loadtxt(ey_path) * 1e3
 # =========================
 # ESCALA DE COLOR CONSISTENTE
 # =========================
-# vmax = max(np.max(np.abs(ex)), np.max(np.abs(ey)))
-vmax = 5
+vmax = (np.mean(ex) + np.mean(ey))/2. + np.sqrt(np.std(ex)**2 + np.std(ey)**2)*2
+# vmax = 5
 vmin = -vmax
 
 # =========================
@@ -96,4 +96,62 @@ for ax in axs:
 
 plt.tight_layout()
 plt.savefig(os.path.join(DIR, "mapa_campos.png"),dpi=600)
+
+# =========================
+# FIGURA EXTRA: Ex (colorbar horizontal)
+# =========================
+fig_ex, ax_ex = plt.subplots()
+
+im_ex = ax_ex.imshow(
+    ex,
+    vmin=vmin,
+    vmax=vmax,
+    cmap="RdBu",
+    origin="lower",
+    aspect="equal"
+)
+
+ax_ex.set_title(r"$E_x$")
+ax_ex.set_xlabel("$x$ (m)")
+ax_ex.set_ylabel("$y$ (m)")
+
+cbar_ex = plt.colorbar(im_ex, ax=ax_ex, orientation='horizontal', pad=0.1)
+cbar_ex.set_label("Campo eléctrico (mV/m)")
+
+ax_ex.set_xticks(np.linspace(0, ex.shape[1], 6))
+ax_ex.set_yticks(np.linspace(0, ex.shape[0], 6))
+ax_ex.grid(color='k', linestyle=':', linewidth=0.3, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig(os.path.join(DIR, "Ex.png"), dpi=600)
+
+
+# =========================
+# FIGURA EXTRA: Ey (colorbar horizontal)
+# =========================
+fig_ey, ax_ey = plt.subplots()
+
+im_ey = ax_ey.imshow(
+    ey,
+    vmin=vmin,
+    vmax=vmax,
+    cmap="RdBu",
+    origin="lower",
+    aspect="equal"
+)
+
+ax_ey.set_title(r"$E_y$")
+ax_ey.set_xlabel("$x$ (m)")
+ax_ey.set_ylabel("$y$ (m)")
+
+cbar_ey = plt.colorbar(im_ey, ax=ax_ey, orientation='horizontal', pad=0.1)
+cbar_ey.set_label("Campo eléctrico (mV/m)")
+
+ax_ey.set_xticks(np.linspace(0, ey.shape[1], 6))
+ax_ey.set_yticks(np.linspace(0, ey.shape[0], 6))
+ax_ey.grid(color='k', linestyle=':', linewidth=0.3, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig(os.path.join(DIR, "Ey.png"), dpi=600)
+
 plt.show()

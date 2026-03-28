@@ -41,7 +41,7 @@ for file in "$DIR"/*.c; do
     exe="$DIR/$base"
 
     echo "Compilando: $file"
-    cc -O3 -fopenmp "$file" -lm -o "$exe"
+    cc -O3 -fopenmp "$file" -lm -o "$exe".exe
 
     if [ $? -ne 0 ]; then
         echo "Error compilando $file"
@@ -53,7 +53,7 @@ for file in "$DIR"/*.c; do
 
     (
         cd "$DIR" || exit
-        ./"$base" > "${base}.out"
+        ./"$base".exe > "${base}.out"
     )
 
     echo "----------------------------------"

@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import os
+from scipy.constants import speed_of_light
 
 # =========================
 # ARGUMENTO
@@ -64,7 +65,14 @@ for file, idx in files:
     for i, point in enumerate(points):
         ax.scatter(t, data[:, i+1]*1e3, s=10,
                    label=f"{field} {point}")
-
+    
+    splitted = point.split(",")
+    x = float(splitted[0][1:])
+    y = float(splitted[1][:-1])
+    # d = np.sqrt((x-500)**2 + (y-500)**2)
+    d = np.abs(500-x)
+    t = d/speed_of_light
+    ax.scatter(t*1e6,0,label="$t=c/d$")
     ax.set_ylabel(r"$E$ (mV/m)")
     ax.set_title(field)
     ax.grid(True)
