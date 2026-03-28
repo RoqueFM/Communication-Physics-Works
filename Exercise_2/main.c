@@ -5,7 +5,7 @@
 
 #define IMAX 1000
 #define JMAX 120
-#define NMAX 600
+#define NMAX 400
 
 #define FRAMESTEP 2
 
@@ -14,7 +14,7 @@
 #define DT 2.358654337e-9
 #define DX 1.0
 
-#define M 400.0
+#define M 50.0
 
 #define PI acos(-1.)
 
